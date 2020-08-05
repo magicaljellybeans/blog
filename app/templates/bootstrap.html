@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Bootstrap CSS -->
+        {{ bootstrap.load_css() }}
+        <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Nova+Cut&family=Open+Sans&family=Oswald:wght@200&display=swap" rel="stylesheet">
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <!-- Navbar -->
+        <div class="container-fluid maxWidth px-0">
+        {% block navbar %}{% endblock %}
+        </div>
+        <!-- Your page content -->
+        {% block content %}{% endblock %}
+
+        <!-- Optional JavaScript -->
+        {{ bootstrap.load_js() }}
+    </body>
+</html>
