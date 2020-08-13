@@ -1,7 +1,7 @@
 from app import login, db
 from flask_login import UserMixin
 from datetime import datetime
-
+import re
 
 class User(UserMixin):
     def get_id(self):
@@ -17,12 +17,18 @@ tags = db.Table('tags',
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text)
+    title = db.Column(db.String(250))
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author = db.Column(db.String(64))
     tags = db.relationship('Tag', secondary=tags, lazy='subquery',
         backref=db.backref('posts', lazy=True))
+    published = db.Column(db.Boolean)
+    slug = db.Column(db.String(300))
+
+    def save(self):
+        if not self.slug:
+            self.slug = re.sub('[^\w]+', '-', self.title.lower())
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
