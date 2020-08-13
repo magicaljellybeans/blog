@@ -3,9 +3,9 @@ from flask_login import UserMixin
 
 
 class User(UserMixin):
-    id = 0
-    username = 'editor'
+    def get_id(self):
+        return "editor"
 
 @login.user_loader
 def load_user(id):
-    return User.get(id)
+    return User()
