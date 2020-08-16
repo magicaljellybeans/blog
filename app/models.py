@@ -24,7 +24,7 @@ class Post(db.Model):
     tags = db.relationship('Tag', secondary=tags, lazy='subquery',
         backref=db.backref('posts', lazy=True))
     published = db.Column(db.Boolean)
-    slug = db.Column(db.String(300))
+    slug = db.Column(db.String(300), unique=True, index=True)
 
     def save(self):
         if not self.slug:

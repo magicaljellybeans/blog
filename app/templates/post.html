@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="row">
+    <div class="col-sm-12 py-2">
+        {% if post %}
+            {% include '_post.html' %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,73 @@
+body {
+    padding-top:62px;
+}
+
+.pagetitle {
+    font-family: Nova Cut;
+    font-size: 18pt;
+}
+
+p {
+    margin-bottom: 8px;
+}
+.opensans,
+a,
+li,
+p {
+    font-family: Open Sans;
+    font-size: small;
+}
+
+a {
+    word-wrap: break-word;
+}
+
+.oswald,
+h3,
+h1,
+h5 {
+    font-family: Oswald;
+}
+
+.maxWidth {
+    max-width: 900px;
+}
+
+nav {
+    background-color: #f2f2f2;
+}
+
+.no-bullets {
+    list-style-type: none;
+}
+
+.pagetitle:link {
+    color: #000000;
+    text-decoration: none;
+}
+
+.pagetitle:visited {
+    color: #000000;
+    text-decoration: none;
+}
+
+.pagetitle:hover {
+    color: #000000;
+    text-decoration: none;
+}
+
+.card-columns {
+    column-count: 1;
+}
+
+@media (min-width: 576px) {
+    .card-columns {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 768px) {
+    .card-columns {
+        column-count: 3;
+    }
+}
