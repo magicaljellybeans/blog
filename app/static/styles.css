@@ -10,8 +10,8 @@ body {
 p {
     margin-bottom: 8px;
 }
+
 .opensans,
-a,
 li,
 p {
     font-family: Open Sans;
@@ -41,17 +41,17 @@ nav {
     list-style-type: none;
 }
 
-.pagetitle:link {
+.linkhide:link {
     color: #000000;
     text-decoration: none;
 }
 
-.pagetitle:visited {
+.linkhide:visited {
     color: #000000;
     text-decoration: none;
 }
 
-.pagetitle:hover {
+.linkhide:hover {
     color: #000000;
     text-decoration: none;
 }

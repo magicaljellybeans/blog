@@ -1,9 +1,21 @@
 <div class="card border shadow-sm">
     <div class="card-body">
-        <a class="pagetitle" href="{{ url_for('post', slug=post.slug) }}">
-        <h5 class="card-title">{{ post.title }}</h5>
-            <p class="card-text">{{ post.body }}</p>
-        </a>
+            <h5 class="card-title"><a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">{{ post.title }}</h5></a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('editor', slug=post.slug) }}">
+            <p>Edit {% if post.published %}Post{% else %}Draft{% endif %}</p></a>
+            <p>
+            {% if post.published %}
+            <a href="{{ url_for('publish', slug=post.slug) }}">Unpublish immediately</a>
+            {% endif %}
+            </p>
+            <p>
+            {% if not post.published %}
+            <a href="{{ url_for('publish', slug=post.slug) }}">Publish immediately</a>
+            {% endif %}
+            </p>
+            {% endif %}
+            <p class="card-text"><a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">{{ post.body }}</p></a>
     </div>
     <div class="card-footer">
         <small class="text-muted">{{ post.timestamp }} by {{ post.author }}</small>
