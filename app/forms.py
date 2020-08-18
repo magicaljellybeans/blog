@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, SubmitField, StringField, TextAreaField, SelectMultipleField, BooleanField
+from wtforms import PasswordField, SubmitField, StringField, TextAreaField, SelectMultipleField, BooleanField, DateTimeField
 from wtforms.validators import DataRequired, Length
 
 class LoginForm(FlaskForm):
@@ -10,5 +10,7 @@ class EditorForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=1, max=250)])
     body = TextAreaField('Body', validators=[DataRequired()])
     tags = SelectMultipleField('Tags')
+    timestamp = DateTimeField('Timestamp')
     published = BooleanField('Publish?')
+    update = BooleanField('Update Timestamp?')
     submit = SubmitField('Save')

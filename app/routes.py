@@ -70,6 +70,7 @@ def editor(slug=None, action=None):
     obj = Post.query.filter_by(slug=slug).first()
     form = EditorForm(obj=obj)
     form.tags.choices = [(tag.tag, tag.tag) for tag in Tag.query.order_by('tag')]
+    drafts = Post.query.filter_by(published=False).all()
 
     if form.validate_on_submit():
         if slug:
@@ -83,22 +84,26 @@ def editor(slug=None, action=None):
         for tag in form.tags.data:
             t = Tag.query.filter_by(tag=tag).first()
             post.tags.append(t)
+        was_published = post.published
+        post.published = form.published.data
 
         if slug and post.published:
-            flash('Published edited post')
+            flash('Published edit')
         elif slug and not post.published:
-            flash('Saved edited post as draft')
+            flash('Unpublished post')
         elif not slug and post.published:
             flash('Published new post')
         elif not slug and not post.published:
             flash('Saved new post as draft')
 
+        if not was_published and post.published and form.update.data:
+            post.update_time()
         post.save()
         slug = post.slug
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('post', slug=slug))
-    return render_template('editor.html', title='Editor', form=form)
+    return render_template('editor.html', title='Editor', form=form, drafts=drafts)
 
 
 @app.route('/publish/<slug>')
@@ -108,9 +113,9 @@ def publish(slug):
     post.published = not post.published
 
     if post.published:
-        flash('Published draft')
+        flash('Published post')
     else:
-        flash('Post withdrawn')
+        flash('Unpublished post')
 
     db.session.add(post)
     db.session.commit()

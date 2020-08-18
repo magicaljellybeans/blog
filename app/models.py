@@ -30,6 +30,9 @@ class Post(db.Model):
         if not self.slug:
             self.slug = re.sub('[^\w]+', '-', self.title.lower())
 
+    def update_time(self):
+        self.timestamp = datetime.utcnow()
+
     def __repr__(self):
         return '<Post {}>'.format(self.title)
 

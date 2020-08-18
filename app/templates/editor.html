@@ -1,11 +1,37 @@
 {% extends "base.html" %}
-{% from 'bootstrap/form.html' import render_form %}
+{% from 'bootstrap/form.html' import render_form_row, render_field %}
 
 {% block app_content %}
 <div class="row">
-    <div class="col-sm-8">
-        <h1>Edit Post</h1>
-        {{ render_form(form) }}
+    <div class="col-sm-12">
+        <div class="d-flex">
+        <h1 class="mr-auto">Edit Post</h1>
+
+        <div class="dropdown show align-self-center">
+            <a class="btn btn-info dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Existing Drafts
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                {% for draft in drafts %}
+                <a class="dropdown-item" href="{{ url_for('editor', slug=draft.slug) }}">{{ draft.title }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+
+        <form method="post">
+            {{ form.csrf_token() }}
+            {{ render_form_row([form.title]) }}
+            {{ render_form_row([form.body]) }}
+            {{ render_form_row([form.tags]) }}
+            <div class="form-row"><div class="col"><div class="form-group">
+            <label class="form-control-label" for="timestamp">Timestamp</label>
+            <input type="text" readonly class="form-control" id="timestamp" value="{{ form.timestamp.data }}">
+            </div></div></div>
+            {{ render_form_row([form.submit, form.published, form.update]) }}
+        </form>
+
     </div>
 </div>
 {% endblock %}
