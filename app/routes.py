@@ -1,10 +1,11 @@
-from flask import render_template, redirect, session, request, url_for, flash
+from flask import render_template, redirect, session, request, url_for, flash, Markup
 from app import app, db
 from app.forms import LoginForm, EditorForm
 from app.models import User, Post, Tag
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from werkzeug.security import check_password_hash
+import markdown
 
 
 @app.route('/')
@@ -17,6 +18,7 @@ def index():
     for item in posts.items:
         if item.body and len(item.body) > app.config['BLURB_LENGTH']:
             item.body = item.body[:app.config['BLURB_LENGTH']] + '...'
+            item.body = Markup(markdown.markdown(item.body))
 
     next_url = url_for('index', page=posts.next_num) \
         if posts.has_next else None
@@ -59,6 +61,7 @@ def post(slug):
     if not current_user.is_authenticated and not post.published:
         return redirect(url_for('index'))
 
+    post.body = Markup(markdown.markdown(post.body))
     title = post.title
     return render_template('post.html', post=post, title=title)
 

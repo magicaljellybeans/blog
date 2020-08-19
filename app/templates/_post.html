@@ -1,6 +1,5 @@
 <div class="card border shadow-sm">
     <div class="card-body">
-            <h5 class="card-title"><a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">{{ post.title }}</h5></a>
             {% if current_user.is_authenticated %}
             <a href="{{ url_for('editor', slug=post.slug) }}">
             <p>Edit {% if post.published %}Post{% else %}Draft{% endif %}</p></a>
@@ -15,7 +14,23 @@
             {% endif %}
             </p>
             {% endif %}
-            <p class="card-text"><a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">{{ post.body }}</p></a>
+            <h3 class="card-title">
+            {% if posts %}
+            <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">{{ post.title }}
+            </a>
+            {% else %}
+            {{ post.title }}
+            {% endif %}
+            </h3>
+            <p class="card-text">
+            {% if posts %}
+            <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
+            {{ post.body }}
+            </a>
+            {% else %}
+            {{ post.body }}
+            {% endif %}
+            </p>
     </div>
     <div class="card-footer">
         <small class="text-muted">{{ post.timestamp }} by {{ post.author }}</small>
