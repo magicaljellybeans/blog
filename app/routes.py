@@ -65,41 +65,56 @@ def post(slug):
 @app.route('/editor/<slug>', methods=['GET', 'POST'])
 @app.route('/editor/', methods=['GET', 'POST'])
 @login_required
-def editor(slug=None, action=None):
-
-    obj = Post.query.filter_by(slug=slug).first()
-    form = EditorForm(obj=obj)
-    form.tags.choices = [(tag.tag, tag.tag) for tag in Tag.query.order_by('tag')]
+def editor(slug=None):
+    # old post or new post?
+    if slug:
+        post = Post.query.filter_by(slug=slug).first()
+    else:
+        post = Post()
+    # populate form, blank for new post
+    form = EditorForm(obj=post)
+    # populate tags field
+    form.tags.choices = [(tag.id, tag.tag) for tag in Tag.query.order_by('tag')]
+    # drafts list
     drafts = Post.query.filter_by(published=False).all()
+    # declare list for tag highlights on GET
+    # and stop wiping of submitted tag choices
+    if request.method == 'GET':
+        form.tags.data = []
+    # if post has tags, highlight them
+    if post.tags:
+        for tag in post.tags:
+            for choice in form.tags.choices:
+                if tag.id == choice[0]:
+                    form.tags.data.append(tag.id)
 
     if form.validate_on_submit():
-        if slug:
-            post = obj
-        else:
-            post = Post()
-
+        # copy form data into post
         post.title = form.title.data
         post.body = form.body.data
         post.author = current_user.get_id()
-        for tag in form.tags.data:
-            t = Tag.query.filter_by(tag=tag).first()
+        for id in form.tags.data:
+            t = Tag.query.filter_by(id=id).first()
             post.tags.append(t)
+        # save previous state before updating
         was_published = post.published
         post.published = form.published.data
 
-        if slug and post.published:
+        if was_published and post.published:
             flash('Published edit')
-        elif slug and not post.published:
+        elif was_published and not post.published:
             flash('Unpublished post')
-        elif not slug and post.published:
+        elif not was_published and post.published:
             flash('Published new post')
-        elif not slug and not post.published:
+        elif not was_published and not post.published:
             flash('Saved new post as draft')
-
+        # allow timestamp updates for drafts being published
         if not was_published and post.published and form.update.data:
             post.update_time()
+        # generate new/updated slug and save for redirection
         post.save()
         slug = post.slug
+
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('post', slug=slug))

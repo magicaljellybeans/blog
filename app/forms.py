@@ -9,7 +9,7 @@ class LoginForm(FlaskForm):
 class EditorForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=1, max=250)])
     body = TextAreaField('Body', validators=[DataRequired()])
-    tags = SelectMultipleField('Tags')
+    tags = SelectMultipleField('Tags', coerce=int)
     timestamp = DateTimeField('Timestamp')
     published = BooleanField('Publish?')
     update = BooleanField('Update Timestamp?')
