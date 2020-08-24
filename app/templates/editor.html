@@ -28,7 +28,7 @@
             {{ form.csrf_token() }}
             {{ render_form_row([form.title]) }}
             {{ render_form_row([form.body]) }}
-            {{ render_form_row([form.tags]) }}
+            {{ render_form_row([form.tags, form.new_tags]) }}
             <div class="form-row"><div class="col"><div class="form-group">
             <label class="form-control-label" for="timestamp">Timestamp</label>
             <input type="text" readonly class="form-control" id="timestamp" value="{{ form.timestamp.data }}">

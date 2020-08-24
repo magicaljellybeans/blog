@@ -106,6 +106,15 @@ def editor(slug=None):
         for id in form.tags.data:
             t = Tag.query.filter_by(id=id).first()
             post.tags.append(t)
+        # add new tags to database and append
+        if form.new_tags.data:
+            new_tags = form.new_tags.data.split()
+            for tag in new_tags:
+                name = tag
+                tag = Tag()
+                tag.tag = name
+                post.tags.append(tag)
+                db.session.add(tag)
         # inform user
         if post.published:
             flash('Published Post')
