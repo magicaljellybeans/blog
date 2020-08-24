@@ -80,16 +80,15 @@ def editor(slug=None):
     form.tags.choices = [(tag.id, tag.tag) for tag in Tag.query.order_by('tag')]
     # drafts list
     drafts = Post.query.filter_by(published=False).all()
-    # declare list for tag highlights on GET
-    # and stop wiping of submitted tag choices
+    # populate defaults only on GET otherwise user choice overidden
     if request.method == 'GET':
-        form.tags.data = []
-    # if post has tags, highlight them
-    if post.tags:
-        for tag in post.tags:
-            for choice in form.tags.choices:
-                if tag.id == choice[0]:
-                    form.tags.data.append(tag.id)
+        # declare default (highlighted) tags list
+        form.tags.default = []
+        # if post has tags, highlight them
+        if post.tags:
+            for tag in post.tags:
+                form.tags.default.append(tag.id)
+            form.tags.process_data(form.tags.default)
 
     if form.validate_on_submit():
         # submission was a delete
@@ -102,6 +101,8 @@ def editor(slug=None):
         post.title = form.title.data
         post.body = form.body.data
         post.author = current_user.get_id()
+        # empty tags list then add highlighted choices
+        post.tags = []
         for id in form.tags.data:
             t = Tag.query.filter_by(id=id).first()
             post.tags.append(t)
@@ -114,9 +115,9 @@ def editor(slug=None):
         elif was_published and not post.published:
             flash('Unpublished post')
         elif not was_published and post.published:
-            flash('Published new post')
+            flash('Published post')
         elif not was_published and not post.published:
-            flash('Saved new post as draft')
+            flash('Saved post as draft')
         # allow timestamp updates for drafts being published
         if not was_published and post.published and form.update.data:
             post.update_time()
