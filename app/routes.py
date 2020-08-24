@@ -74,52 +74,45 @@ def editor(slug=None):
         post = Post.query.filter_by(slug=slug).first()
     else:
         post = Post()
+    # drafts list
+    drafts = Post.query.filter_by(published=False).all()
     # populate form, blank for new post
     form = EditorForm(obj=post)
     # populate tags field
     form.tags.choices = [(tag.id, tag.tag) for tag in Tag.query.order_by('tag')]
-    # drafts list
-    drafts = Post.query.filter_by(published=False).all()
     # populate defaults only on GET otherwise user choice overidden
     if request.method == 'GET':
         # declare default (highlighted) tags list
-        form.tags.default = []
+        form.tags.data = []
         # if post has tags, highlight them
         if post.tags:
             for tag in post.tags:
-                form.tags.default.append(tag.id)
-            form.tags.process_data(form.tags.default)
+                form.tags.data.append(tag.id)
 
     if form.validate_on_submit():
         # submission was a delete
         if form.delete.data:
             db.session.delete(post)
             db.session.commit()
-            flash('Post deleted')
+            flash('Post Deleted')
             return redirect(url_for('editor'))
         # copy form data into post
         post.title = form.title.data
         post.body = form.body.data
         post.author = current_user.get_id()
+        post.published = form.published.data
         # empty tags list then add highlighted choices
         post.tags = []
         for id in form.tags.data:
             t = Tag.query.filter_by(id=id).first()
             post.tags.append(t)
-        # save previous state before updating
-        was_published = post.published
-        post.published = form.published.data
-
-        if was_published and post.published:
-            flash('Published edit')
-        elif was_published and not post.published:
-            flash('Unpublished post')
-        elif not was_published and post.published:
-            flash('Published post')
-        elif not was_published and not post.published:
-            flash('Saved post as draft')
+        # inform user
+        if post.published:
+            flash('Published Post')
+        elif not post.published:
+            flash('Unpublished Post')
         # allow timestamp updates for drafts being published
-        if not was_published and post.published and form.update.data:
+        if post.published and form.update.data:
             post.update_time()
         # generate new/updated slug and save for redirection
         post.save()
@@ -138,9 +131,9 @@ def publish(slug):
     post.published = not post.published
 
     if post.published:
-        flash('Published post')
+        flash('Published Post')
     else:
-        flash('Unpublished post')
+        flash('Unpublished Post')
 
     db.session.add(post)
     db.session.commit()
