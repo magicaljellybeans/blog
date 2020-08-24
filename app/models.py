@@ -27,8 +27,7 @@ class Post(db.Model):
     slug = db.Column(db.String(300), unique=True, index=True)
 
     def save(self):
-        if not self.slug:
-            self.slug = re.sub('[^\w]+', '-', self.title.lower())
+        self.slug = re.sub('[^\w]+', '-', self.title.lower())
 
     def update_time(self):
         self.timestamp = datetime.utcnow()

@@ -14,4 +14,5 @@ class EditorForm(FlaskForm):
     timestamp = DateTimeField('Timestamp')
     published = BooleanField('Publish?')
     update = BooleanField('Update Timestamp?')
+    delete = SubmitField('Delete')
     submit = SubmitField('Save')

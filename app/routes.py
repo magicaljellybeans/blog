@@ -92,6 +92,12 @@ def editor(slug=None):
                     form.tags.data.append(tag.id)
 
     if form.validate_on_submit():
+        # submission was a delete
+        if form.delete.data:
+            db.session.delete(post)
+            db.session.commit()
+            flash('Post deleted')
+            return redirect(url_for('editor'))
         # copy form data into post
         post.title = form.title.data
         post.body = form.body.data
@@ -117,7 +123,7 @@ def editor(slug=None):
         # generate new/updated slug and save for redirection
         post.save()
         slug = post.slug
-
+        # save post
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('post', slug=slug))
