@@ -147,3 +147,19 @@ def publish(slug):
     db.session.add(post)
     db.session.commit()
     return redirect(url_for('post', slug=slug))
+
+
+@app.route('/archive')
+def archive():
+    # get all posts in new to old list
+    posts = Post.query.filter_by(published=1).order_by(Post.timestamp.desc()).all()
+    # create dict with month keys and posts as list of values
+    myd = {}
+    for post in posts:
+        m = post.timestamp.strftime("%B %Y")
+        if m not in myd:
+            myd[m] = [post]
+            continue
+        myd[m].append(post)
+
+    return render_template('archive.html', title='Archive', myd=myd)

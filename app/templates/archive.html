@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="row">
+<div class="col-12 py-2">
+<div id="accordion">
+    {% for month in myd %}
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    {{ month + " (+)" }}
+                </button>
+            </h5>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                {% for post in myd[month] %}
+                    <a href="{{ url_for('post', slug=post.slug) }}">
+                        {{ post.title + " / " + post.timestamp.strftime("%d.%m.%y") }}
+                    </a>
+                    <br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+</div>
+{% endblock %}
