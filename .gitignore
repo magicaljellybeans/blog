@@ -5,3 +5,4 @@ todos
 *.swp
 *.db-journal
 app.db
+logs
