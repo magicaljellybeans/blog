@@ -115,11 +115,6 @@ def editor(slug=None):
                 tag.tag = name
                 post.tags.append(tag)
                 db.session.add(tag)
-        # inform user
-        if post.published:
-            flash('Published Post')
-        elif not post.published:
-            flash('Unpublished Post')
         # allow timestamp updates for drafts being published
         if post.published and form.update.data:
             post.update_time()
@@ -129,6 +124,11 @@ def editor(slug=None):
         # save post
         db.session.add(post)
         db.session.commit()
+        # inform user
+        if post.published:
+            flash('Published Post')
+        elif not post.published:
+            flash('Unpublished Post')
         return redirect(url_for('post', slug=slug))
     return render_template('editor.html', title='Editor', form=form, drafts=drafts)
 
