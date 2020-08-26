@@ -14,14 +14,17 @@
             {% endif %}
             </p>
             {% endif %}
-            <h3 class="card-title">
             {% if posts %}
-            <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">{{ post.title }}
+            <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
+            <h3 class="card-title">
+            {{ post.title }}
+            </h3>
             </a>
             {% else %}
+            <h3 class="card-title">
             {{ post.title }}
-            {% endif %}
             </h3>
+            {% endif %}
             <p class="card-text">
             {% if posts %}
             <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
@@ -33,7 +36,7 @@
             </p>
     </div>
     <div class="card-footer">
-        <small class="text-muted">{{ post.timestamp }} by {{ post.author }}</small>
+        <small class="text-muted">{{ post.timestamp.strftime("%d.%m.%y %H:%M") }} by {{ post.author }}</small>
         <br>
         <small class="text-muted">
         {% for tag in post.tags %}

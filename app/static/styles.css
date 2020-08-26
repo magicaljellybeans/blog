@@ -12,7 +12,8 @@ p {
 }
 
 .opensans,
-li,
+a,
+small,
 p {
     font-family: Open Sans;
     font-size: small;
@@ -23,9 +24,7 @@ a {
 }
 
 .oswald,
-h3,
-h1,
-h5 {
+h1, h2, h3, h4, h5, h6 {
     font-family: Oswald;
 }
 
@@ -70,4 +69,14 @@ nav {
     .card-columns {
         column-count: 3;
     }
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.quick {
+    transition: none !important;
+    transition-delay: 0s;
+    transition-delay: 0s !important;
 }
