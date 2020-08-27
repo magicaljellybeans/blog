@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<h1>Archive</h3>
 <div class="row">
 <div class="col-12 py-2">
 <div id="accordion">
     {% for month in myd %}
     <div class="card shadow-sm">
-        <div class="card-header pointer" id="headingOne" data-toggle="collapse" data-target="#collapseOne,#upcaret,#downcaret">
+        <div class="card-header pointer" id="heading{{ loop.index }}" data-toggle="collapse" data-target="#collapse{{ loop.index }},#upcaret,#downcaret">
             <h5 class="mb-0">
                 {{ month }}
                 <span id="downcaret" class="collapse quick show">&#x25BE;</span>
                 <span id="upcaret" class="collapse quick hidden">&#x25B4;</span>
             </h5>
         </div>
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+        <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
             <div class="card-body">
                 {% for post in myd[month] %}
                     <a href="{{ url_for('post', slug=post.slug) }}">

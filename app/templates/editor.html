@@ -9,10 +9,10 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="d-flex">
-        <h1 class="mr-auto">Edit Post</h1>
+        <h1 class="mr-auto">Editor</h1>
 
-        <div class="dropdown show align-self-center">
-            <a class="btn btn-info dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="dropdown show align-self-center shadow-sm">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Existing Drafts
             </a>
 
@@ -26,14 +26,40 @@
 
         <form method="post">
             {{ form.csrf_token() }}
-            {{ render_form_row([form.title]) }}
-            {{ render_form_row([form.body]) }}
-            {{ render_form_row([form.tags, form.new_tags]) }}
-            <div class="form-row"><div class="col"><div class="form-group">
-            <label class="form-control-label" for="timestamp">Timestamp</label>
-            <input type="text" readonly class="form-control" id="timestamp" value="{{ form.timestamp.data }}">
-            </div></div></div>
-            {{ render_form_row([form.submit, form.published, form.update, form.delete]) }}
+            {{ render_field(form.title, class="shadow-sm form-control") }}
+            {{ render_field(form.body, class="shadow-sm form-control flask-pagedown-input") }}
+            <div class="form-row">
+                <div class="col">
+                    {{ render_field(form.tags, class="shadow-sm form-control") }}
+                </div>
+                <div class="col">
+                    {{ render_field(form.new_tags, class="shadow-sm form-control") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label class="form-control-label" for="timestamp">Timestamp</label>
+                        <input type="text" readonly class="form-control shadow-sm" id="timestamp" value="{% if form.timestamp.data %}{{ form.timestamp.data.strftime("%d.%m.%y %H:%M:%S UTC") }}{% else %}No timestamp until saved/published{% endif %}">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    {{ render_field(form.submit, class="btn btn-success btn-md shadow-sm") }}
+                </div>
+                <div class="col">
+                    {{ render_field(form.published, class="form-check-input") }}
+                </div>
+                <div class="col">
+                    {{ render_field(form.update, class="form-check-input") }}
+                </div>
+                <div class="col">
+                    <div class="float-right">
+                    {{ render_field(form.delete, class="btn btn-danger btn-md") }}
+                    </div>
+                </div>
+            </div>
         </form>
 
     </div>
