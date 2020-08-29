@@ -1,4 +1,5 @@
 import os
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
@@ -17,4 +18,5 @@ class Config(object):
     ADMINS = ['tome.robin@gmail.com']
 
     POSTS_PER_PAGE = 10
-    BLURB_LENGTH = 200
+    UPLOAD_FOLDER = 'app/static/images/'
+    ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'bmp']

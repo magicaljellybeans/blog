@@ -1,49 +1,58 @@
 <div class="card border shadow-sm">
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('editor', slug=post.slug) }}">
+      <p>Edit {% if post.published %}Post{% else %}Draft{% endif %}</p></a>
+        {% if post.published %}
+            <a href="{{ url_for('publish', slug=post.slug) }}"><p>Unpublish immediately</p></a>
+        {% endif %}
+        {% if not post.published %}
+            <a href="{{ url_for('publish', slug=post.slug) }}"><p>Publish immediately</p></a>
+        {% endif %}
+    {% endif %}
+
+
+    {% if posts %}
+    <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
+    {% if post.image %}
+    <img class="card-img-top" src="{{ url_for('static', filename='images/' + post.image) }}">
+    {% endif %}
+    </a>
+    {% else %}
+    <img class="card-img-top" src="{{ url_for('static', filename='images/' + post.image) }}">
+    {% endif %}
     <div class="card-body">
-            {% if current_user.is_authenticated %}
-            <a href="{{ url_for('editor', slug=post.slug) }}">
-            <p>Edit {% if post.published %}Post{% else %}Draft{% endif %}</p></a>
-            <p>
-            {% if post.published %}
-            <a href="{{ url_for('publish', slug=post.slug) }}">Unpublish immediately</a>
-            {% endif %}
-            </p>
-            <p>
-            {% if not post.published %}
-            <a href="{{ url_for('publish', slug=post.slug) }}">Publish immediately</a>
-            {% endif %}
-            </p>
-            {% endif %}
-            {% if posts %}
-            <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
-            <h3 class="card-title">
+        {% if posts %}
+        <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
+        <h3 class="card-title">
             {{ post.title }}
-            </h3>
-            </a>
-            {% else %}
-            <h3 class="card-title">
+        </h3>
+            {% if post.blurb %}
+            <p class="card-text">{{ post.blurb }}</p>
+            {% endif %}
+        </a>
+        {% else %}
+        <h3 class="card-title">
             {{ post.title }}
-            </h3>
-            {% endif %}
-            <p class="card-text">
-            {% if posts %}
-            <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
+        </h3>
+        <p class="card-text">
             {{ post.body }}
-            </a>
-            {% else %}
-            {{ post.body }}
-            {% endif %}
-            </p>
+        </p>
+        {% endif %}
     </div>
+
+
     <div class="card-footer">
         <small class="text-muted">{{ post.timestamp.strftime("%d.%m.%y %H:%M") }} by {{ post.author }}</small>
         <br>
         <small class="text-muted">
         {% for tag in post.tags %}
             {% if post.tags|length > 1 and (tag != post.tags|last) %}
-                {{ tag.tag + " /" }}
+            <a class="linkhide" href="{{ url_for('tag', tag=tag.tag) }}">
+                {{ tag.tag }}</a> /
             {% else %}
+            <a class="linkhide" href="{{ url_for('tag', tag=tag.tag) }}">
                 {{ tag.tag }}
+            </a>
             {% endif %}
         {% endfor %}
         </small>

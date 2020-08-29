@@ -1,8 +1,8 @@
-"""Post, Tag, tags
+"""initial
 
-Revision ID: c97b1b14450c
+Revision ID: 4fd1bfb0a149
 Revises: 
-Create Date: 2020-08-13 23:44:56.244965
+Create Date: 2020-08-29 01:10:12.291157
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c97b1b14450c'
+revision = '4fd1bfb0a149'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,13 +21,17 @@ def upgrade():
     op.create_table('post',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=250), nullable=True),
+    sa.Column('blurb', sa.String(length=200), nullable=True),
     sa.Column('body', sa.Text(), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.Column('author', sa.String(length=64), nullable=True),
     sa.Column('published', sa.Boolean(), nullable=True),
     sa.Column('slug', sa.String(length=300), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('image', sa.String(length=310), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('image')
     )
+    op.create_index(op.f('ix_post_slug'), 'post', ['slug'], unique=True)
     op.create_index(op.f('ix_post_timestamp'), 'post', ['timestamp'], unique=False)
     op.create_table('tag',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -51,5 +55,6 @@ def downgrade():
     op.drop_index(op.f('ix_tag_tag'), table_name='tag')
     op.drop_table('tag')
     op.drop_index(op.f('ix_post_timestamp'), table_name='post')
+    op.drop_index(op.f('ix_post_slug'), table_name='post')
     op.drop_table('post')
     # ### end Alembic commands ###

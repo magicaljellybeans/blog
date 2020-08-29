@@ -5,7 +5,9 @@ from app.models import User, Post, Tag
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 import markdown
+import os
 
 
 @app.route('/')
@@ -14,11 +16,6 @@ def index():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.filter_by(published=1).order_by(Post.timestamp.desc()).paginate(
         page, app.config['POSTS_PER_PAGE'], False)
-
-    for item in posts.items:
-        if item.body and len(item.body) > app.config['BLURB_LENGTH']:
-            item.body = item.body[:app.config['BLURB_LENGTH']] + '...'
-            item.body = Markup(markdown.markdown(item.body))
 
     next_url = url_for('index', page=posts.next_num) \
         if posts.has_next else None
@@ -65,6 +62,7 @@ def post(slug):
     title = post.title
     return render_template('post.html', post=post, title=title)
 
+
 @app.route('/editor/<slug>', methods=['GET', 'POST'])
 @app.route('/editor/', methods=['GET', 'POST'])
 @login_required
@@ -98,9 +96,20 @@ def editor(slug=None):
             return redirect(url_for('editor'))
         # copy form data into post
         post.title = form.title.data
+        post.blurb = form.blurb.data
         post.body = form.body.data
         post.author = current_user.get_id()
         post.published = form.published.data
+        # generate new/updated slug and save for redirection
+        post.save()
+        slug = post.slug
+        # header image to folder
+        if form.image.data and not post.image:
+            file = form.image.data
+            extension = file.filename.split(".")[-1]
+            filename = f"{post.slug}.{extension}"
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            post.image = filename
         # empty tags list then add highlighted choices
         post.tags = []
         for id in form.tags.data:
@@ -118,9 +127,6 @@ def editor(slug=None):
         # allow timestamp updates for drafts being published
         if post.published and form.update.data:
             post.update_time()
-        # generate new/updated slug and save for redirection
-        post.save()
-        slug = post.slug
         # save post
         db.session.add(post)
         db.session.commit()
@@ -163,3 +169,18 @@ def archive():
         myd[m].append(post)
 
     return render_template('archive.html', title='Archive', myd=myd)
+
+
+@app.route('/tag/<tag>')
+def tag(tag):
+    # display posts with given tag as pages
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.filter_by(published=1).join(Post.tags).filter_by(tag=tag).order_by(Post.timestamp.desc()).paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+
+    next_url = url_for('index', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) \
+        if posts.has_prev else None
+
+    return render_template('tag.html', title=f"Posts tagged {tag}", posts=posts.items, next_url=next_url, prev_url=prev_url)

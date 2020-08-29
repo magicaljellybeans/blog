@@ -24,10 +24,12 @@
         </div>
         </div>
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {{ form.csrf_token() }}
             {{ render_field(form.title, class="shadow-sm form-control") }}
-            {{ render_field(form.body, class="shadow-sm form-control flask-pagedown-input") }}
+            {{ render_field(form.image, form_type="horizontal", horizontal_columns=('sm', 3, 9), class="form-control-file") }}
+            {{ render_field(form.blurb, class="shadow-sm form-control", placeholder="Add an optional blurb", rows="2") }}
+            {{ render_field(form.body, class="shadow-sm form-control flask-pagedown-input", rows="4") }}
             <div class="form-row">
                 <div class="col">
                     {{ render_field(form.tags, class="shadow-sm form-control") }}
@@ -40,17 +42,18 @@
                 <div class="col">
                     <div class="form-group">
                         <label class="form-control-label" for="timestamp">Timestamp</label>
-                        <input type="text" readonly class="form-control shadow-sm" id="timestamp" value="{% if form.timestamp.data %}{{ form.timestamp.data.strftime("%d.%m.%y %H:%M:%S UTC") }}{% else %}No timestamp until saved/published{% endif %}">
+                        <input type="text" readonly class="form-control shadow-sm" id="timestamp" value="{% if form.timestamp.data %}{{ form.timestamp.data.strftime("%d.%m.%y %H:%M:%S UTC") }}{% else %}No timestamp until saved or published{% endif %}">
                     </div>
                 </div>
             </div>
-            <div class="form-row">
+            <div class="form-row mb-3">
                 <div class="col">
                     {{ render_field(form.submit, class="btn btn-success btn-md shadow-sm") }}
                 </div>
                 <div class="col">
                     {{ render_field(form.published, class="form-check-input") }}
                 </div>
+                {% if form.title.data %}
                 <div class="col">
                     {{ render_field(form.update, class="form-check-input") }}
                 </div>
@@ -59,6 +62,7 @@
                     {{ render_field(form.delete, class="btn btn-danger btn-md") }}
                     </div>
                 </div>
+                {% endif %}
             </div>
         </form>
 

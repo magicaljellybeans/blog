@@ -18,6 +18,7 @@ tags = db.Table('tags',
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250))
+    blurb = db.Column(db.String(200))
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author = db.Column(db.String(64))
@@ -25,6 +26,7 @@ class Post(db.Model):
         backref=db.backref('posts', lazy=True))
     published = db.Column(db.Boolean)
     slug = db.Column(db.String(300), unique=True, index=True)
+    image = db.Column(db.String(310), unique=True)
 
     def save(self):
         self.slug = re.sub('[^\w]+', '-', self.title.lower()) + str(self.id)
