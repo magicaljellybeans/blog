@@ -29,7 +29,7 @@ class Post(db.Model):
     image = db.Column(db.String(310), unique=True)
 
     def save(self):
-        self.slug = re.sub('[^\w]+', '-', self.title.lower()) + str(self.id)
+        self.slug = re.sub('[^\w]+', '-', self.title.lower()) + str(datetime.now().strftime("%f"))
 
     def update_time(self):
         self.timestamp = datetime.utcnow()

@@ -6,3 +6,4 @@ todos
 *.db-journal
 app.db
 logs
+static/images/*

@@ -107,7 +107,7 @@ def editor(slug=None):
         if form.image.data and not post.image:
             file = form.image.data
             extension = file.filename.split(".")[-1]
-            filename = f"{post.slug}.{extension}"
+            filename = f"{slug}.{extension}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
             post.image = filename
         # empty tags list then add highlighted choices
