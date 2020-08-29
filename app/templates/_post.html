@@ -23,7 +23,7 @@
     <div class="card-body">
         {% if posts %}
         <a class="linkhide" href="{{ url_for('post', slug=post.slug) }}">
-        <h3 class="card-title">
+        <h3 class="card-title {%if not post.blurb %}mb-0{% endif %}">
             {{ post.title }}
         </h3>
             {% if post.blurb %}

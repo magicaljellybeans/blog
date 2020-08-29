@@ -5,28 +5,32 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar fixed-top navbar-expand navbar-light">
-        <div class="mx-auto d-flex d-block flex-nowrap">
-            <a class="navbar-brand pagetitle" href="{{ url_for('index') }}">a blog has no name</a>
-            <div id="navbarNavDropdown">
-                <ul class="navbar-nav opensans pt-1">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('archive') }}">archive</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="">about</a>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('editor') }}">editor</a>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('logout') }}">logout</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+<nav class="navbar fixed-top navbar-expand-sm navbar-light">
+    <div class="mx-auto d-sm-flex d-block flex-sm-nowrap">
+        <a class="navbar-brand pagetitle" href="{{ url_for('index') }}">a blog has no name</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto opensans pt-1">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('archive') }}">archive</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="">about</a>
+                </li>
+                {% if current_user.is_authenticated %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('editor') }}">editor</a>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('logout') }}">logout</a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 {% endblock %}
 
 {% block content %}

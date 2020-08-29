@@ -18,5 +18,7 @@ class Config(object):
     ADMINS = ['tome.robin@gmail.com']
 
     POSTS_PER_PAGE = 10
+
     UPLOAD_FOLDER = 'app/static/images/'
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'bmp']
+    MAX_CONTENT_LENGTH = 3 * 1024 * 1024
