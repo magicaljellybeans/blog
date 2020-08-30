@@ -5,7 +5,6 @@ from app.models import User, Post, Tag
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from werkzeug.security import check_password_hash
-from werkzeug.utils import secure_filename
 import markdown
 import os
 
@@ -38,17 +37,17 @@ def login():
         password = form.password.data
         if check_password_hash(app.config['ADMIN_KEY'], password):
             login_user(user)
-            flash('Logged in as editor')
+            flash(f"Logged In As {user}")
             return redirect(next_url)
         else:
-            flash('Incorrect password')
+            flash('Incorrect Password')
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash('Logged out with great success')
+    flash('Logged Out')
     return redirect(url_for('index'))
 
 @app.route('/post/<slug>')
@@ -103,8 +102,11 @@ def editor(slug=None):
         # generate new/updated slug and save for redirection
         post.save()
         slug = post.slug
-        # header image to folder
-        if form.image.data and not post.image:
+        # header image save
+        if form.image.data and form.image.data.filename is not post.image:
+            # remove old image
+            if post.image:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
             file = form.image.data
             extension = file.filename.split(".")[-1]
             filename = f"{slug}.{extension}"
@@ -124,7 +126,7 @@ def editor(slug=None):
                 tag.tag = name
                 post.tags.append(tag)
                 db.session.add(tag)
-        # allow timestamp updates for drafts being published
+        # update timestamp?
         if post.published and form.update.data:
             post.update_time()
         # save post

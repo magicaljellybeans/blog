@@ -18,7 +18,9 @@
     {% endif %}
     </a>
     {% else %}
+    {% if post.image %}
     <img class="card-img-top" src="{{ url_for('static', filename='images/' + post.image) }}">
+    {% endif %}
     {% endif %}
     <div class="card-body">
         {% if posts %}
