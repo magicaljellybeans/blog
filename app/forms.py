@@ -12,7 +12,7 @@ class LoginForm(FlaskForm):
 
 class EditorForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=1, max=250)])
-    image = FileField('Header Image', validators=[FileAllowed(app.config['ALLOWED_EXTENSIONS'])], description="3MB file size limit")
+    image = FileField('Header Image', validators=[FileAllowed(app.config['ALLOWED_EXTENSIONS'])], description="3MB file size limit.")
     blurb = TextAreaField('Blurb', validators=[Length(max=200)])
     body = PageDownField('Body', validators=[DataRequired()])
     tags = SelectMultipleField('Tags', coerce=int, description="CTRL and click to unselect/select multiple tags")

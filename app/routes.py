@@ -89,6 +89,8 @@ def editor(slug=None):
     if form.validate_on_submit():
         # submission was a delete
         if form.delete.data:
+            if post.image:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
             db.session.delete(post)
             db.session.commit()
             flash('Post Deleted')
@@ -99,9 +101,9 @@ def editor(slug=None):
         post.body = form.body.data
         post.author = current_user.get_id()
         post.published = form.published.data
-        # generate new/updated slug and save for redirection
-        post.save()
-        slug = post.slug
+        # generate slug for new posts
+        if not post.slug:
+            post.save()
         # header image save
         if form.image.data and form.image.data.filename is not post.image:
             # remove old image
@@ -109,7 +111,7 @@ def editor(slug=None):
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
             file = form.image.data
             extension = file.filename.split(".")[-1]
-            filename = f"{slug}.{extension}"
+            filename = f"{post.slug}.{extension}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
             post.image = filename
         # empty tags list then add highlighted choices
@@ -137,7 +139,7 @@ def editor(slug=None):
             flash('Published Post')
         elif not post.published:
             flash('Unpublished Post')
-        return redirect(url_for('post', slug=slug))
+        return redirect(url_for('post', slug=post.slug))
     return render_template('editor.html', title='Editor', form=form, drafts=drafts)
 
 
