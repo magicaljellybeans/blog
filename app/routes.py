@@ -5,6 +5,7 @@ from app.models import User, Post, Tag
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from werkzeug.security import check_password_hash
+from datetime import datetime
 import markdown
 import os
 
@@ -111,7 +112,9 @@ def editor(slug=None):
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
             file = form.image.data
             extension = file.filename.split(".")[-1]
-            filename = f"{post.slug}.{extension}"
+            # versioning so cache will refresh image
+            version = str(datetime.now().strftime("%d%m%y%H%M%S%f"))
+            filename = f"{post.slug}.{version}.{extension}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
             post.image = filename
         # empty tags list then add highlighted choices
