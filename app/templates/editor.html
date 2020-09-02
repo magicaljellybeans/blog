@@ -38,7 +38,11 @@
                 </div>
                 {% if form.image.data %}
                 <div class="input-group-append">
-                    <button class="btn btn-outline-danger" type="button" id="button">Remove</button>
+                    <a href="{{ url_for('remove', slug=slug) }}" class="btn btn-outline-danger oswald" type="button" id="button1">Remove</a>
+                </div>
+                {% else %}
+                <div class="input-group-append">
+                    <a href="#" class="btn btn-outline-danger oswald" type="button" id="button2">Remove</a>
                 </div>
                 {% endif %}
                 </div>
@@ -91,13 +95,19 @@
 
 {% block script %}
 <script>
-    $('#button').on('click', function() {
-        $('#image').val('');
-    });
 
     $('#image').change(function(e){
         let filename = e.target.files[0].name;
         $('#label').html(filename);
+    });
+
+    $('#button1').on('click', function(){
+        return confirm('Removing attached image now will cause the page to reload and any unsaved updates to the form to be discarded. Do you wish to continue?');
+    });
+
+    $('#button2').on('click', function(){
+        $('#image').val('');
+        $('#label').html('None');
     });
 
 </script>

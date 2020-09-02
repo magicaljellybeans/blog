@@ -145,7 +145,7 @@ def editor(slug=None):
         elif not post.published:
             flash('Unpublished Post')
         return redirect(url_for('post', slug=post.slug))
-    return render_template('editor.html', title='Editor', form=form, drafts=drafts)
+    return render_template('editor.html', title='Editor', form=form, drafts=drafts, slug=post.slug)
 
 
 @app.route('/publish/<slug>')
@@ -162,6 +162,18 @@ def publish(slug):
     db.session.add(post)
     db.session.commit()
     return redirect(url_for('post', slug=slug))
+
+
+@app.route('/remove/<slug>')
+@login_required
+def remove(slug):
+    post = Post.query.filter_by(slug=slug).first()
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
+    post.image = None
+    flash('Image Removed')
+    db.session.add(post)
+    db.session.commit()
+    return redirect(url_for('editor', slug=slug))
 
 
 @app.route('/archive')
