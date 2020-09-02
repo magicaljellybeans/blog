@@ -7,19 +7,30 @@
 <div id="accordion">
     {% for month in myd %}
     <div class="card shadow-sm">
-        <div class="card-header pointer" id="heading{{ loop.index }}" data-toggle="collapse" data-target="#collapse{{ loop.index }},#upcaret,#downcaret">
+        <div class="card-header pointer" id="heading{{ loop.index }}" data-toggle="collapse" data-target="#collapse{{ loop.index }},#upcaret{{ loop.index }},#downcaret{{ loop.index }}">
             <h5 class="mb-0">
                 {{ month }}
-                <span id="downcaret" class="collapse quick show">&#x25BE;</span>
-                <span id="upcaret" class="collapse quick hidden">&#x25B4;</span>
+                <span id="downcaret{{ loop.index }}" class="collapse quick show">&#x25BE;</span>
+                <span id="upcaret{{ loop.index }}" class="collapse quick hidden">&#x25B4;</span>
             </h5>
         </div>
         <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
             <div class="card-body">
                 {% for post in myd[month] %}
+                        <small>
+                        {{ post.timestamp.strftime("%d.%m.%y") + " /" }}</small>
                     <a href="{{ url_for('post', slug=post.slug) }}">
-                        {{ post.title }}</a><small>
-                        {{ "/ " + post.timestamp.strftime("%d.%m.%y") }}
+                        {{ post.title }}</a><small class="text-muted"> /
+                    {% for tag in post.tags %}
+                    {% if post.tags|length > 1 and (tag != post.tags|last) %}
+                        <a class="linkhide" href="{{ url_for('tag', tag=tag.tag) }}">
+                        {{ tag.tag }}</a> /
+                        {% else %}
+                        <a class="linkhide" href="{{ url_for('tag', tag=tag.tag) }}">
+                        {{ tag.tag }}
+                        </a>
+                    {% endif %}
+                    {% endfor %}
                     </small>
                     <br>
                 {% endfor %}

@@ -10,7 +10,6 @@
     <div class="col-sm-12">
         <div class="d-flex">
         <h1 class="mr-auto">Editor</h1>
-
         <div class="dropdown show align-self-center shadow-sm">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Existing Drafts
@@ -32,13 +31,20 @@
                 <label class="form-control-label" for="image">Header Image</label>
                 </div>
                 <div class="col-sm-10">
-                <div class="custom-file shadow-sm">
+                <div class="input-group shadow-sm">
+                <div class="custom-file">
                     <input class="custom-file-input" id="image" name="image" title=" " type="file">
-                    <label class="custom-file-label form-control-label" for="image">{{ form.image.data }}</label>
+                    <label class="custom-file-label form-control-label" for="image" id="label">{{ form.image.data }}</label>
+                </div>
+                {% if form.image.data %}
+                <div class="input-group-append">
+                    <button class="btn btn-outline-danger" type="button" id="button">Remove</button>
+                </div>
+                {% endif %}
                 </div>
                 </div>
                 <div class="offset-sm-2 col-sm-10">
-                    <small class="form-text text-muted">3MB file size limit</small>
+                    <small class="form-text text-muted">1MB file size limit</small>
                 </div>
             </div>
             {{ render_field(form.blurb, class="shadow-sm form-control", placeholder="Add an optional blurb", rows="2") }}
@@ -81,4 +87,18 @@
 
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#button').on('click', function() {
+        $('#image').val('');
+    });
+
+    $('#image').change(function(e){
+        let filename = e.target.files[0].name;
+        $('#label').html(filename);
+    });
+
+</script>
 {% endblock %}

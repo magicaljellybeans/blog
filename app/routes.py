@@ -105,8 +105,9 @@ def editor(slug=None):
         # generate slug for new posts
         if not post.slug:
             post.save()
+        #raise
         # header image save
-        if form.image.data and form.image.data.filename is not post.image:
+        if form.image.data is not post.image:
             # remove old image
             if post.image:
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
@@ -117,6 +118,7 @@ def editor(slug=None):
             filename = f"{post.slug}.{version}.{extension}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
             post.image = filename
+
         # empty tags list then add highlighted choices
         post.tags = []
         for id in form.tags.data:

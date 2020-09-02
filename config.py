@@ -21,4 +21,4 @@ class Config(object):
 
     UPLOAD_FOLDER = 'app/static/images/'
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'bmp']
-    MAX_CONTENT_LENGTH = 3 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 1 * 1024 * 1024
