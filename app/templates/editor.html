@@ -12,13 +12,17 @@
         <h1 class="mr-auto">Editor</h1>
         <div class="dropdown show align-self-center shadow-sm">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Existing Drafts
+            Drafts
             </a>
 
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                {% if drafts %}
                 {% for draft in drafts %}
                 <a class="dropdown-item" href="{{ url_for('editor', slug=draft.slug) }}">{{ draft.title }}</a>
                 {% endfor %}
+                {% else %}
+                <a class="dropdown-item" href="">No saved drafts!</a>
+                {% endif %}
             </div>
         </div>
         </div>
