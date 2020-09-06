@@ -1,11 +1,11 @@
-from app import login, db
+from app import login, db, app
 from flask_login import UserMixin
 from datetime import datetime
 import re
 
 class User(UserMixin):
     def get_id(self):
-        return "editor"
+        return app.config['AUTHOR']
 
 @login.user_loader
 def load_user(id):
@@ -29,6 +29,7 @@ class Post(db.Model):
     image = db.Column(db.String(310), unique=True)
 
     def save(self):
+        # time added to slug to increase chance of uniqueness
         self.slug = re.sub('[^\w]+', '-', self.title.lower()) + str(datetime.now().strftime("%f"))
 
     def update_time(self):

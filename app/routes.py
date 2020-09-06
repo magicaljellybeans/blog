@@ -29,20 +29,26 @@ def index():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = LoginForm()
+
     next_url = request.args.get('next')
     if not next_url or url_parse(next_url).netloc != '':
         next_url = url_for('index')
+
     if form.validate_on_submit():
         user = User()
         password = form.password.data
+
         if check_password_hash(app.config['ADMIN_KEY'], password):
             login_user(user)
-            flash(f"Logged In As {user}")
+            flash(f"Logged In As {current_user.get_id()}")
             return redirect(next_url)
         else:
             flash('Incorrect Password')
+
     return render_template('login.html', title='Sign In', form=form)
+
 
 @app.route('/logout')
 @login_required
@@ -51,15 +57,17 @@ def logout():
     flash('Logged Out')
     return redirect(url_for('index'))
 
+
 @app.route('/post/<slug>')
 def post(slug):
-
     post = Post.query.filter_by(slug=slug).first_or_404()
+
     if not current_user.is_authenticated and not post.published:
         return redirect(url_for('index'))
 
     post.body = Markup(markdown.markdown(post.body))
     title = post.title
+
     return render_template('post.html', post=post, title=title)
 
 
@@ -67,28 +75,23 @@ def post(slug):
 @app.route('/editor/', methods=['GET', 'POST'])
 @login_required
 def editor(slug=None):
-    # old post or new post?
     if slug:
         post = Post.query.filter_by(slug=slug).first()
     else:
         post = Post()
-    # drafts list
+
     drafts = Post.query.filter_by(published=False).all()
-    # populate form, blank for new post
     form = EditorForm(obj=post)
-    # populate tags field
+
     form.tags.choices = [(tag.id, tag.tag) for tag in Tag.query.order_by('tag')]
-    # populate defaults only on GET otherwise user choice overidden
+    # highlight attached tags only on GET or user changes overidden
     if request.method == 'GET':
-        # declare default (highlighted) tags list
         form.tags.data = []
-        # if post has tags, highlight them
         if post.tags:
             for tag in post.tags:
                 form.tags.data.append(tag.id)
 
     if form.validate_on_submit():
-        # submission was a delete
         if form.delete.data:
             if post.image:
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
@@ -96,7 +99,7 @@ def editor(slug=None):
             db.session.commit()
             flash('Post Deleted')
             return redirect(url_for('editor'))
-        # copy form data into post
+
         post.title = form.title.data
         post.blurb = form.blurb.data
         post.body = form.body.data
@@ -105,15 +108,14 @@ def editor(slug=None):
         # generate slug for new posts
         if not post.slug:
             post.save()
-        #raise
-        # header image save
+        # when image changed/added
         if form.image.data is not post.image:
             # remove old image
             if post.image:
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
             file = form.image.data
             extension = file.filename.split(".")[-1]
-            # versioning so cache will refresh image
+            # simple versioning so cache will always refresh image
             version = str(datetime.now().strftime("%d%m%y%H%M%S%f"))
             filename = f"{post.slug}.{version}.{extension}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
@@ -122,9 +124,9 @@ def editor(slug=None):
         # empty tags list then add highlighted choices
         post.tags = []
         for id in form.tags.data:
-            t = Tag.query.filter_by(id=id).first()
-            post.tags.append(t)
-        # add new tags to database and append
+            tag = Tag.query.filter_by(id=id).first()
+            post.tags.append(tag)
+
         if form.new_tags.data:
             new_tags = form.new_tags.data.split()
             for tag in new_tags:
@@ -133,17 +135,18 @@ def editor(slug=None):
                 tag.tag = name
                 post.tags.append(tag)
                 db.session.add(tag)
-        # update timestamp?
+
         if post.published and form.update.data:
             post.update_time()
-        # save post
+
         db.session.add(post)
         db.session.commit()
-        # inform user
+
         if post.published:
             flash('Published Post')
         elif not post.published:
             flash('Unpublished Post')
+
         return redirect(url_for('post', slug=post.slug))
     return render_template('editor.html', title='Editor', form=form, drafts=drafts, slug=post.slug)
 
@@ -170,9 +173,12 @@ def remove(slug):
     post = Post.query.filter_by(slug=slug).first()
     os.remove(os.path.join(app.config['UPLOAD_FOLDER'], post.image))
     post.image = None
+
     flash('Image Removed')
+
     db.session.add(post)
     db.session.commit()
+
     return redirect(url_for('editor', slug=slug))
 
 
