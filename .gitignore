@@ -7,3 +7,5 @@ app.db
 logs
 app/static/images/
 todos
+.env
+.flaskenv
